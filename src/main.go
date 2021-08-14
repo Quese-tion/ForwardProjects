@@ -10,7 +10,7 @@ type Package struct {
 
 type Packs []Package
 var pack1,pack2 Packs
-var results []Package
+var results, test []Package
 
 
 func main() {
@@ -25,15 +25,44 @@ func main() {
   fmt.Println(packages, "\n-----------------------------\n")
   packs:= make(chan Package)
   for range packages{
-    go sortpackages(packages, packs )
-    results=append(results, <-packs)
+    go sortpackages(packages, packs, results )
+    test=append(test, <-packs)
   }
-  fmt.Println("Results",results)
+  fmt.Println("Results",test)
 }
 
-func sortpackages(packages Packs, pac chan Package ){
-  for i,pack :=range packages{
-    fmt.Println(pack)
+func sortpackages(packages Packs, pac chan Package, result Packs ){
+  fmt.Println(packages)
+  for _, pack := range packages{
+    fmt.Println(pack.name, "\n", pack.dep)
+      if pack.dep=="" {
+        //results=append(results, pack)
+       // results = append(results[:i], results[i+1:]...)
+        pac<-pack
+      } else{
+        for _, result:= range results{ //First
+          if result.name==pack.dep { //z new package v
+          //  results=append(results,pack)
+          //  results = append(results[:i], results[i+1:]...)
+            pac<-pack
+          } else{
+          //  results=append(results,pack)
+          //  results = append(results[:i], results[i+1:]...)
+            pac<-pack
+            }} }
+  }
+}
+
+func sortpacks(packages Packs, results Packs)  {
+
+}
+
+func inspect(packages Packs,pac chan Package ){ //Delete from original then recurse
+  for i,v :=range packages{
+    fmt.Println(v)
+    i := i
+    go func(pack Package) {
+      fmt.Println(pack)
       if pack.dep=="" {
         results=append(results, pack)
         results = append(results[:i], results[i+1:]...)
@@ -51,31 +80,7 @@ func sortpackages(packages Packs, pac chan Package ){
             results = append(results[:i], results[i+1:]...)
             pac<-pack
             return}} }
-  }
-}
-
-func inspect(packages Packs){ //Delete from original then recurse
-  for i,v :=range packages{
-    fmt.Println(v)
-    i := i
-    go func(pack Package) {
-      fmt.Println(pack)
-      if pack.dep=="" {
-        results=append(results, pack)
-        results = append(results[:i], results[i+1:]...)
-        return
-      } else{
-        for i, result:= range results{ //First
-          if result.name==pack.dep { //z new package v
-            results=append(results,pack)
-            results = append(results[:i], results[i+1:]...)
-            return
-          } else{
-            results=append(results,pack)
-            results = append(results[:i], results[i+1:]...)
-            return}} }
       fmt.Println(results)
-      inspect(pack1)
     }(v)
 }
   fmt.Println(results)
