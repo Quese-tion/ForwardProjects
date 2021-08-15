@@ -1,10 +1,9 @@
 package main
 
-import (
-  "fmt"
-)
-type Mapper map[string]Package
-func main() {
+import "fmt"
+var test, results []Package
+
+func mai() {
   names := []string{"kitten", "leetmeme", "cyberportal", "camel", "cook", "ice"}
   deps := []string{"", "cyberportal", "ice", "kitten", "leetmeme", ""}
   packages := []Package{}
@@ -14,52 +13,69 @@ func main() {
 
   pack1 = append(pack1, packages...) // think I ran out of memory take remotely...
   fmt.Println(packages, "\n-----------------------------\n")
-  inspect(packages, pack1)
+  packs:= make(chan Package)
+  for range packages{
+    go sortpackages(packages, packs, results )
+    test=append(test, <-packs)
+  }
+  fmt.Println("Results",test)
 }
 
-func inspect(pac1 Packs, pac2 Packs){ //Delete from original then recurse
-  for i,v :=range pac1{
-    fmt.Println("Interation ", i)
-    if (i==0){
-      if (v.dep==""){
-        fmt.Println("Hello ", pac2)
-        results=append(results, v)
-        pac2=append(pac2[1:],pac2[1:]...)
-        break
-      } else {
-        oldone:=v
-        pac1=append(pac1[:1],pac1[:1]... )
-        pac1=append(pac1, oldone)
-      }
-      //need to delete element from struct slice
-    } else if i>0{
-      if v.dep==""{
-        results=append(results, v)
-        pac2=append(pac2[:1],pac2[1:]...)
-      }else
-      if searchresults(mapper(results),v) { //Located in results
-        results=append(results, v)
-        pac2=append(pac2[i:],pac2[:i+1]...)
-        //need to delete element from struct slice
-      }else{
-          results=append(results,v)
-          fmt.Println("Results: ", results, "\nLeft: ", pac2)
-          return
-      } }
+func sortpackages(packages Packs, pac chan Package, result Packs ){
+  fmt.Println(packages)
+  for _, pack := range packages{
+    fmt.Println(pack.name, "\n", pack.dep)
+    if pack.dep=="" {
+      //results=append(results, pack)
+      // results = append(results[:i], results[i+1:]...)
+      pac<-pack
+    } else{
+      for _, result:= range results{ //First
+        if result.name==pack.dep { //z new package v
+          //  results=append(results,pack)
+          //  results = append(results[:i], results[i+1:]...)
+          pac<-pack
+        } else{
+          //  results=append(results,pack)
+          //  results = append(results[:i], results[i+1:]...)
+          pac<-pack
+        }} }
   }
-  fmt.Println("Results: ", results, "New list : ", pac2)
- //inspect(pac1,pac2)
 }
 
-func mapper(packs []Package) map[string]Package{
-  mapout:=make(map[string]Package)
-  for _,y:= range packs{
-    mapout[y.name]=y
-  }
-  return mapout
+func sortpacks(packages Packs, results Packs)  {
+
 }
-func searchresults(m Mapper, p Package)(bool){
-  _,err:=m[p.name]
-  fmt.Println("Searchresults for : ", m, "| Checking for: ",p, "| Showed: ", err)
-  return err
+
+func ninspect(packages Packs,pac chan Package ){ //Delete from original then recurse
+  for i,v :=range packages{
+    fmt.Println(v)
+    i := i
+    go func(pack Package) {
+      fmt.Println(pack)
+      if pack.dep=="" {
+        results=append(results, pack)
+        results = append(results[:i], results[i+1:]...)
+        pac<-pack
+        return
+      } else{
+        for i, result:= range results{ //First
+          if result.name==pack.dep { //z new package v
+            results=append(results,pack)
+            results = append(results[:i], results[i+1:]...)
+            pac<-pack
+            return
+          } else{
+            results=append(results,pack)
+            results = append(results[:i], results[i+1:]...)
+            pac<-pack
+            return}} }
+      fmt.Println(results)
+    }(v)
+  }
+  fmt.Println(results)
+}
+
+func (p *Packs) deleteElement(){
+  fmt.Println("Yee")
 }
