@@ -13,7 +13,7 @@ var pack1,pack2 Packs
 var results, test []Package
 
 
-func main() {
+func mai() {
   names := []string{"kitten", "leetmeme", "cyberportal", "camel", "cook", "ice"}
   deps := []string{"", "cyberportal", "ice", "kitten", "leetmeme", ""}
   packages := []Package{}
@@ -57,7 +57,7 @@ func sortpacks(packages Packs, results Packs)  {
 
 }
 
-func inspect(packages Packs,pac chan Package ){ //Delete from original then recurse
+func ninspect(packages Packs,pac chan Package ){ //Delete from original then recurse
   for i,v :=range packages{
     fmt.Println(v)
     i := i
