@@ -11,7 +11,7 @@ func TestLoop(m *testing.T) {
   err =nil
   if err !=nil {m.Fatal(err)}
 }
-func TestInspect(){
+func TestInspect(t *testing.T){
   packages:=newpack()
   pack1 = newpack()
   fmt.Println(packages, "\n-----------------------------\n")
