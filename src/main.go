@@ -2,6 +2,7 @@ package main
 
 import (
   "fmt"
+  "log"
 )
 type Package struct {
   name string
@@ -47,26 +48,29 @@ func TestInspect(){
   fmt.Println(packages, "\n-----------------------------\n")
   chNone:=checknone(pack1)
   chDepend:=checkdependency(chNone)
-  chOut:=checkOut(chDepend)
-  fmt.Println("Old List: ",chNone, "\nNew List: ", chDepend, "\nResults: ", chOut)
+  chOut:=checkOut(chDepend) //chOut
+  fmt.Println(  chOut)
 }
 
 func checknone(first Packs)(Packs){
   var update []Package
-  fmt.Println("SIZE: ",len(first), first)
+  fmt.Println("SIZE: ",len(first), first,"\nLets put blank dependencies at top of list:")
+  _, err := fmt.Scanf("\n")
+  CheckErr(err)
+
   for i, v:= range first{
     if i==0 && v.dep=="" {
       RR=append(RR, v)
       update=append([]Package{},first[i+1:]...)
-      fmt.Println("Added: ", v, "In First 0: ", update )
+      fmt.Println("Added: ", v)
     } else if v.dep=="" && i!=len(first)-1{
       RR=append(RR, v)
       update=append([]Package{},update[i:]...)
-      fmt.Println("Added: ", v, "In First not end: ", update )
+      fmt.Println("Added: ", v)
     }else if i==len(first)-1 && v.dep==""{
       RR=append(RR, v)
       update=append([]Package{},update[:i-1]...)
-      fmt.Println("Added: ", v, "First that is end: ", update )
+      fmt.Println("Added: ", v)
     } else {
       last:=first[0]
       update=append(update,first[1:]...)
@@ -78,7 +82,10 @@ func checkdependency(second Packs)(Packs){
   var update []Package
   update=append(update,second...)
   length:=len(second)
-  fmt.Println("SIZE: ",length, update)
+  fmt.Println("SIZE: ",length, update,"\nLets clear dependencies:")
+  _, err := fmt.Scanf("\n")
+  CheckErr(err)
+
   for i, v:= range second{
     search:=searchresults(mapper(RR), v.dep)
     if i==0 && search==false{ //SKIP
@@ -88,22 +95,27 @@ func checkdependency(second Packs)(Packs){
     } else if i==0 && search==true {
       RR=append(RR, v)
       update=append([]Package{},update[i+1:]...)
-      fmt.Println("Added: ", v, "In First 0: ", update )
+      fmt.Println("Added: ", v)
     } else if i<(length-1) && search==true {
-      fmt.Println("INDEX: ",i," Bring: ", update)
       RR=append(RR, v)
       update=append([]Package{},update[1:]...)
+      fmt.Println("Added: ", v)
     }else if i==(length-1) && search==true{
       RR=append(RR, v)
       update=append(update[:i],update[i+1:]...)
-      fmt.Println("Added: ", v, "First that is end: ", update )
-    } else {}
-    fmt.Println("Interation ", i, "Update: ", update)
-  }
+      fmt.Println("Added: ", v )
+    } else {}}
 
   return update
 }
 func checkOut(third Packs) (Packs){
   result:=append(RR, third...)
+  fmt.Println( "\nFinally Results:")
+  _, err := fmt.Scanf("\n")
+  CheckErr(err)
+
   return result
+}
+func CheckErr(err error){
+  if err != nil {log.Fatal(err)}
 }
