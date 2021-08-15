@@ -13,6 +13,8 @@ type Packs []Package
 type Mapper map[string]Package
 
 var pack1,pack2 Packs
+var counter int
+var innerpack []Package
 var RR []Package
 
 //Helper Classes
@@ -39,18 +41,31 @@ func searchresults(m Mapper, p string)(bool){
 }    //Searches map for value
 
 func main() {
-  TestInspect()
+  packages:=newpack()
+ chOut:=inspect(packages,0)
+  fmt.Println(chOut)
 }
 
-func TestInspect(){
-  packages:=newpack()
-  pack1 = newpack()
-  fmt.Println(packages, "\n-----------------------------\n")
-  chNone:=checknone(pack1)
-  chDepend:=checkdependency(chNone)
-  chOut:=checkOut(chDepend) //chOut
-  fmt.Println(  chOut)
-}
+func inspect(packets Packs, level int) Packs {
+  if level!=3{
+    level++
+    switch level {
+    case 1:
+      packets = checknone(packets)
+      break
+    case 2:
+      packets = checkdependency(packets)
+      break
+    case 3:
+      pack1 =append([]Package{}, checkOut(packets)...)
+      return pack1
+    default:
+      log.Fatal("Something happened....")
+    }} else { return packets}
+
+  inspect(packets, level)
+  return pack1
+} //Recursive
 
 func checknone(first Packs)(Packs){
   var update []Package
@@ -110,10 +125,9 @@ func checkdependency(second Packs)(Packs){
 }
 func checkOut(third Packs) (Packs){
   result:=append(RR, third...)
-  fmt.Println( "\nFinally Results:")
+  fmt.Println( "\nFully Sorted: ")
   _, err := fmt.Scanf("\n")
   CheckErr(err)
-
   return result
 }
 func CheckErr(err error){
